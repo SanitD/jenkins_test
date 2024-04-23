@@ -1,7 +1,5 @@
 pipeline {
-    agent {
-	    label 'linux'
-    }
+   agent any
 
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
@@ -16,6 +14,9 @@ pipeline {
 				}
 			}
 	    stage ('print stage') {
+	           agent {
+	                  label 'linux'
+                  }
 		    steps {
 			    sh 'echo "new stage"'
 		    }
@@ -41,7 +42,7 @@ pipeline {
     }
     post {
 	success {
-            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sanit295@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
+            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sathishbabudevops@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
         }  
     }
 }
