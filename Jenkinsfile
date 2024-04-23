@@ -10,16 +10,14 @@ pipeline {
 	    stage ('scm') {
 		    steps {
 			    // Get some code from a GitHub repository
-               git credentialsId: 'github', url: 'git@github.com:SanitD/jenkins_test.git'
+                git credentialsId: 'github', url: 'git@github.com:sathishbob/jenkins_test.git'
 				}
 			}
-
-	stage('Print stage name') {
-		steps{
-			sh 'echo "new stage"'
-		}
-	}
-		
+	    stage ('print stage') {
+		    steps {
+			    sh 'echo "new stage"'
+		    }
+	    }
         stage('Build') {
             steps {
                // Run Maven on a Unix agent.
@@ -34,9 +32,14 @@ pipeline {
                 // failed, record the test results and archive the jar file.
                 success {
                     junit stdioRetention: '', testResults: 'api-gateway/target/surefire-reports/*.xml'
-                    archiveArtifacts artifacts: 'api-gateway/target/*.jar', followSymlinks: false
+                    archiveArtifacts 'target/*.jar'
                 }
             }
         }
+    }
+    post {
+	success {
+            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sanit295@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
+        }  
     }
 }
