@@ -1,7 +1,5 @@
 pipeline {
-   agent {
-	   label 'windows'
-   }
+   agent any
 
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
@@ -12,21 +10,21 @@ pipeline {
 	    stage ('scm') {
 		    steps {
 			    // Get some code from a GitHub repository
-                git credentialsId: 'github', url: 'git@github.com:sathishbob/jenkins_test.git'
+                git credentialsId: 'github', url: 'git@github.com:SanitD/jenkins_test.git'
 				}
 			}
 	    stage ('print stage') {
 		    steps {
-			    bat 'echo "new stage"'
+			    sh 'echo "new stage"'
 		    }
 	    }
         stage('Build') {
             steps {
                // Run Maven on a Unix agent.
-                //sh "mvn -Dmaven.test.failure.ignore=true -f api-gateway clean package"
+                sh "mvn -Dmaven.test.failure.ignore=true -f api-gateway clean package"
 
                 // To run Maven on a Windows agent, use
-                bat "mvn -Dmaven.test.failure.ignore=true -f api-gateway clean package"
+                //bat "mvn -Dmaven.test.failure.ignore=true -f api-gateway clean package"
             }
 
             post {
@@ -41,7 +39,7 @@ pipeline {
     }
     post {
 	success {
-            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sathishbabudevops@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
+            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sanit295@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
         }  
     }
 }
