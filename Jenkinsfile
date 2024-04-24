@@ -36,10 +36,20 @@ pipeline {
                 }
             }
         }
+	 stage('sonar analysis') {
+	       steps {
+		       script {
+			       scannerHome = tool 'sonar';
+			       withSonarQubeEnv('sonar') {
+						sh "${scannerHome}/bin/sonar-scanner -Dsonar.projectKey=jenkins_test -Dsonar.projectName=jenkins_test -Dsonar.projectVersion=1.0 -Dsonar.projectBaseDir=$WORKSPACE -Dsonar.sources=$WORKSPACE -Dsonar.java.binaries=$WORKSPACE"
+						}
+				}
+			}
+	   }					
     }
     post {
 	success {
-            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sanit295@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
+            emailext body: "Please check console aouput at $BUILD_URL for more information\n", to: "sanit@gmail.com", subject: 'Jenkinstraining - $PROJECT_NAME build completed sucessfully - Build number is $BUILD_NUMBER - Build status is $BUILD_STATUS' 
         }  
     }
 }
