@@ -1,6 +1,8 @@
 pipeline {
-   agent any
-
+   agent {
+	   label 'linux'
+   }
+	
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
         maven "MVN3"
@@ -10,7 +12,7 @@ pipeline {
 	    stage ('scm') {
 		    steps {
 			    // Get some code from a GitHub repository
-                git credentialsId: 'github', url: 'git@github.com:SanitD/jenkins_test.git'
+                git credentialsId: 'github', url: 'git@github.com:sathishbob/jenkins_test.git'
 				}
 			}
 	    stage ('print stage') {
@@ -49,7 +51,7 @@ pipeline {
 	    stage('sonar quality gate') {
 		    steps {
 			    script {
-				    sleep(30)
+				    sleep(40)
 				    qg = waitForQualityGate()
 				    if (qg.status != 'OK') {
 					    error "pipeline aborted due to quality gate failure: ${qg.status}"
@@ -57,6 +59,20 @@ pipeline {
 			    }
 		    }
 	    }
+	    stage('dependency check') {
+		    steps {
+			    script {
+				    sh '''
+					sudo rm -rf $PWD/report/* || true
+     					sudo chmod 777 $PWD
+     					sudo mkdir -p $PWD/OWASP-Dependency-Check/data
+	 				sudo mkdir -p $PWD/report
+      					sudo chmod 777 $PWD/OWASP-Dependency-Check/data
+	   				sudo chmod 777 $PWD/report
+					sudo docker run --rm -v $PWD:/src:z -v $PWD/OWASP-Dependency-Check/data:/usr/share/dependency-check/data:z -v $PWD/report:/report:z owasp/dependency-check --scan /src --format "ALL"  --project "devsecops" --out /report '''
+			    }
+		    }
+	    }	    
     }
     post {
 	success {
