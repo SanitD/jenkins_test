@@ -1,4 +1,3 @@
-## pipeline with report
 pipeline {
    agent {
 	   label 'linux'
